@@ -100,7 +100,7 @@ const Index = () => {
     );
     try {
       await setTaskDone(taskId, next);
-    } catch (e: any) {
+    } catch {
       toast.error("Couldn't sync — reverted");
       setGoals((prev) =>
         prev.map((g) =>
@@ -120,7 +120,7 @@ const Index = () => {
     if (!next.length) setView("empty");
     try {
       await deleteGoalCloud(id);
-    } catch (e: any) {
+    } catch {
       toast.error("Couldn't delete — reverted");
       setGoals(prev);
     }
