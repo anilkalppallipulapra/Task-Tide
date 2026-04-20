@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
+import { UserMenu } from "./UserMenu";
 import { dayOfGoal, type Goal } from "@/lib/tasktide";
 
 type Tab = "today" | "progress";
@@ -23,6 +24,8 @@ interface Props {
   onToggleTask: (taskId: string) => void;
   onNewGoal: () => void;
   onDeleteGoal: (id: string) => void;
+  onSignOut?: () => void;
+  userEmail?: string;
 }
 
 export const Dashboard = ({
@@ -32,6 +35,8 @@ export const Dashboard = ({
   onToggleTask,
   onNewGoal,
   onDeleteGoal,
+  onSignOut,
+  userEmail,
 }: Props) => {
   const [tab, setTab] = useState<Tab>("today");
   const goal = goals.find((g) => g.id === activeGoalId) ?? goals[0];
@@ -65,6 +70,7 @@ export const Dashboard = ({
               <Plus className="h-4 w-4" />
               New goal
             </Button>
+            {onSignOut && <UserMenu email={userEmail} onSignOut={onSignOut} />}
           </div>
         </div>
 
