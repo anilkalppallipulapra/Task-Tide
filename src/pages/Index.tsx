@@ -7,6 +7,8 @@ import { Breakdown } from "@/components/tasktide/Breakdown";
 import { Dashboard } from "@/components/tasktide/Dashboard";
 import { EmptyState } from "@/components/tasktide/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
+import { isSupabaseConfigured } from "@/integrations/supabase/client";
+import { SetupRequired } from "@/components/tasktide/SetupRequired";
 import {
   fetchGoals,
   persistGoal,
@@ -44,6 +46,10 @@ const Index = () => {
       .catch((e) => toast.error(e.message ?? "Failed to load goals"))
       .finally(() => setLoadingGoals(false));
   }, [user]);
+
+  if (!isSupabaseConfigured) {
+    return <SetupRequired />;
+  }
 
   // Public landing for unauthenticated visitors
   if (authLoading) {
