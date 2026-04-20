@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/tasktide/Logo";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
+import { SetupRequired } from "@/components/tasktide/SetupRequired";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -26,6 +27,8 @@ const Auth = () => {
   useEffect(() => {
     if (!authLoading && session) navigate("/", { replace: true });
   }, [authLoading, session, navigate]);
+
+  if (!isSupabaseConfigured) return <SetupRequired />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
