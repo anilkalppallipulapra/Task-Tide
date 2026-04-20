@@ -24,8 +24,6 @@ const assertSupabaseConfigured = () => {
   }
 };
 
-// Local "AI" breakdown — deterministic-feeling generator
-export const generateBreakdown = (
 // AI-powered breakdown via edge function
 export const generateBreakdown = async (
   title: string,
