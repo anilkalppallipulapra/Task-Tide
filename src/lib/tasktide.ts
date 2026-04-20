@@ -16,54 +16,29 @@ export type Goal = {
   tasks: Task[];
 };
 
-// Local "AI" breakdown — deterministic-feeling generator
-export const generateBreakdown = (
-  title: string,
-  _description: string,
-  durationDays: number
-): Omit<Task, "id">[] => {
-  const t = title.trim() || "your goal";
-  const themes = [
-    `Define what success looks like for "${t}"`,
-    `Research the top 3 obstacles for ${t}`,
-    `Outline a simple daily routine`,
-    `Set up your environment & tools`,
-    `Take one tiny first step`,
-    `Document a baseline measurement`,
-    `Identify one accountability partner`,
-    `Block focused time on your calendar`,
-    `Practice the core skill for 20 minutes`,
-    `Review what worked, drop what didn't`,
-    `Push slightly past your comfort zone`,
-    `Teach the concept to someone (or yourself)`,
-    `Refine your approach based on feedback`,
-    `Celebrate a small win`,
-    `Plan next week's focus`,
-  ];
-  const tasks: Omit<Task, "id">[] = [];
-  for (let day = 1; day <= durationDays; day++) {
-    const idx = (day - 1) % themes.length;
-    tasks.push({ title: themes[idx], day, done: false });
-  }
-  if (tasks.length) {
-    tasks[tasks.length - 1] = {
-      ...tasks[tasks.length - 1],
-      title: `Reflect on "${t}" — what changed?`,
-    };
-  }
-  return tasks;
-};
-
-// Build an in-memory draft goal (not yet persisted)
-export const draftGoal = (
+// AI-powered breakdown via edge function
+export const generateBreakdown = async (
   title: string,
   description: string,
   durationDays: number
-): Goal => {
-  const tasks = generateBreakdown(title, description, durationDays).map((t, i) => ({
-    ...t,
-    id: `draft-${i}`,
-  }));
+): Promise<Omit<Task, "id">[]> => {
+  const { data, error } = await supabase.functions.invoke("generate-breakdown", {
+    body: { title: title.trim(), description: description.trim(), durationDays },
+  });
+  if (error) throw new Error(error.message ?? "Failed to generate plan");
+  if (data?.error) throw new Error(data.error);
+  const tasks = (data?.tasks ?? []) as { day: number; title: string }[];
+  return tasks.map((t) => ({ title: t.title, day: t.day, done: false }));
+};
+
+// Build an in-memory draft goal (not yet persisted)
+export const draftGoal = async (
+  title: string,
+  description: string,
+  durationDays: number
+): Promise<Goal> => {
+  const generated = await generateBreakdown(title, description, durationDays);
+  const tasks = generated.map((t, i) => ({ ...t, id: `draft-${i}` }));
   return {
     id: "draft",
     title: title.trim(),
