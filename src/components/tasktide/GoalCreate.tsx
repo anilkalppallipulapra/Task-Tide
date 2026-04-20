@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { newGoal, type Goal } from "@/lib/tasktide";
+import { draftGoal, type Goal } from "@/lib/tasktide";
 
 interface Props {
   onBack: () => void;
@@ -31,7 +31,7 @@ export const GoalCreate = ({ onBack, onCreated }: Props) => {
     setGenerating(true);
     // Faux AI think-time
     await new Promise((r) => setTimeout(r, 1100));
-    const goal = newGoal(title, description, duration);
+    const goal = draftGoal(title, description, duration);
     onCreated(goal);
   };
 
