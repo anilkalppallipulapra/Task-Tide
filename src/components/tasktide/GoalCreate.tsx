@@ -29,10 +29,15 @@ export const GoalCreate = ({ onBack, onCreated }: Props) => {
   const handleGenerate = async () => {
     if (!title.trim()) return;
     setGenerating(true);
-    // Faux AI think-time
-    await new Promise((r) => setTimeout(r, 1100));
-    const goal = draftGoal(title, description, duration);
-    onCreated(goal);
+    try {
+      const goal = await draftGoal(title, description, duration);
+      onCreated(goal);
+    } catch (e: any) {
+      const { toast } = await import("sonner");
+      toast.error(e?.message ?? "Failed to generate plan");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
