@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 
 type Ctx = {
   session: Session | null;
@@ -21,6 +21,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setSession(null);
+      setLoading(false);
+      return;
+    }
+
     // Set up listener BEFORE getSession
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);

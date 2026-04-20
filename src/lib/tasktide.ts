@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 
 export type Task = {
   id: string;
@@ -16,6 +16,16 @@ export type Goal = {
   tasks: Task[];
 };
 
+const assertSupabaseConfigured = () => {
+  if (!isSupabaseConfigured) {
+    throw new Error(
+      "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY."
+    );
+  }
+};
+
+// Local "AI" breakdown — deterministic-feeling generator
+export const generateBreakdown = (
 // AI-powered breakdown via edge function
 export const generateBreakdown = async (
   title: string,
@@ -57,6 +67,7 @@ export const dayOfGoal = (goal: Goal): number => {
 // ---- Cloud-backed operations ----
 
 export const fetchGoals = async (userId: string): Promise<Goal[]> => {
+  assertSupabaseConfigured();
   const { data: goalsData, error } = await supabase
     .from("goals")
     .select("*")
@@ -87,6 +98,7 @@ export const fetchGoals = async (userId: string): Promise<Goal[]> => {
 };
 
 export const persistGoal = async (userId: string, goal: Goal): Promise<Goal> => {
+  assertSupabaseConfigured();
   const { data: gRow, error: gErr } = await supabase
     .from("goals")
     .insert({
@@ -128,11 +140,13 @@ export const persistGoal = async (userId: string, goal: Goal): Promise<Goal> => 
 };
 
 export const setTaskDone = async (taskId: string, done: boolean) => {
+  assertSupabaseConfigured();
   const { error } = await supabase.from("tasks").update({ done }).eq("id", taskId);
   if (error) throw error;
 };
 
 export const deleteGoalCloud = async (goalId: string) => {
+  assertSupabaseConfigured();
   const { error } = await supabase.from("goals").delete().eq("id", goalId);
   if (error) throw error;
 };
