@@ -2,15 +2,19 @@ import { motion } from "framer-motion";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
+import { UserMenu } from "./UserMenu";
 
 interface Props {
   onCreate: () => void;
+  onSignOut?: () => void;
+  userEmail?: string;
 }
 
-export const EmptyState = ({ onCreate }: Props) => (
+export const EmptyState = ({ onCreate, onSignOut, userEmail }: Props) => (
   <div className="min-h-screen bg-gradient-soft">
     <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
       <Logo />
+      {onSignOut && <UserMenu email={userEmail} onSignOut={onSignOut} />}
     </header>
     <main className="mx-auto flex max-w-xl flex-col items-center px-6 pt-20 text-center">
       <motion.div
