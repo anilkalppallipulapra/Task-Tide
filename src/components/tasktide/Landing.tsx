@@ -92,9 +92,10 @@ export const Landing = ({ onGetStarted }: Props) => {
               text: "Watch streaks build and your goal inch closer every day.",
             },
           ].map((f, i) => (
-            <div
+            <button
               key={f.title}
-              className="group rounded-2xl border bg-gradient-card p-6 text-left shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant"
+              onClick={onGetStarted}
+              className="group rounded-2xl border bg-gradient-card p-6 text-left shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               style={{ animationDelay: `${i * 0.1}s` }}
             >
               <div className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
@@ -102,7 +103,10 @@ export const Landing = ({ onGetStarted }: Props) => {
               </div>
               <h3 className="font-display text-lg font-semibold">{f.title}</h3>
               <p className="mt-1.5 text-sm text-muted-foreground">{f.text}</p>
-            </div>
+              <div className="mt-3 flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition-smooth group-hover:opacity-100">
+                Get started <ArrowRight className="h-3 w-3" />
+              </div>
+            </button>
           ))}
         </motion.div>
 
