@@ -31,7 +31,7 @@ const Index = () => {
 
   // Load goals when user is available
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     setLoadingGoals(true);
     fetchGoals(user.id)
       .then((gs) => {
@@ -45,7 +45,9 @@ const Index = () => {
       })
       .catch((e) => toast.error(e.message ?? "Failed to load goals"))
       .finally(() => setLoadingGoals(false));
-  }, [user]);
+  // Load goals when user first logs in — depends on user.id only,
+  // so tab switches and token refreshes do not reset the view.
+  }, [user?.id]);
 
   if (!isSupabaseConfigured) {
     return <SetupRequired />;
