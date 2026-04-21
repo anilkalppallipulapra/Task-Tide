@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/tasktide/Logo";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { SetupRequired } from "@/components/tasktide/SetupRequired";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -61,11 +60,13 @@ const Auth = () => {
   const handleGoogle = async () => {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+        },
       });
-      if (result.error) throw result.error;
-      if (!result.redirected) navigate("/", { replace: true });
+      if (error) throw error;
     } catch (err: any) {
       toast.error(err.message ?? "Google sign-in failed");
       setLoading(false);
